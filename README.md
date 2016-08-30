@@ -9,7 +9,7 @@
 
 Simple implementation of the proposed [psr-16 simplecache standard](https://github.com/php-fig/simplecache). It is recommended that
 you familiarize yourself with [the proposal](https://github.com/php-fig/fig-standards/blob/master/proposed/simplecache.md)
-when using this package. This does not currently implement the _CounterInterface_ of the proposal.
+when using this package. This does not currently implement the `CounterInterface` of the proposal.
 
 ## Install
 
@@ -57,7 +57,7 @@ If you discover any security related issues, please email john.n.laswell@gmail.c
 
 ## Credits
 
-- [John Laswell][https://github.com/jlaswell]
+- [John Laswell](https://github.com/jlaswell)
 - [All Contributors][link-contributors]
 
 ## License
