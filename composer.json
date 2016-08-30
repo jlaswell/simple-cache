@@ -1,0 +1,55 @@
+{
+    "name": "realpage/simple-cache",
+    "type": "library",
+    "description": "Simple caching based on the proposed PSR-16",
+    "keywords": [
+        "realpage",
+        "simple-cache"
+    ],
+    "homepage": "https://github.com/realpage/simple-cache",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "John Laswell",
+            "email": "john.n.laswell@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/php-fig/simplecache"
+        }
+    ],
+    "require": {
+        "php": "~5.6|~7.0",
+        "psr/simple-cache": "dev-master"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.0||~5.0",
+        "scrutinizer/ocular": "~1.1",
+        "squizlabs/php_codesniffer": "~2.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Realpage\\SimpleCache\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Realpage\\SimpleCache\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "format": "phpcbf --standard=psr2 src/"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
