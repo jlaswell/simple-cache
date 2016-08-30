@@ -56,7 +56,7 @@ class ArrayCache implements CacheInterface
 
     public function setMultiple($items, $ttl = null)
     {
-        $keys = $this->transformKeys($items);
+        $this->transformKeys($items);
         foreach ($items as $key => $value) {
             $this->data[$key] = $value;
         }
