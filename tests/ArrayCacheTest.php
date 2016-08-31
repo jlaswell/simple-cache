@@ -4,6 +4,7 @@ namespace Realpage\SimpleCache\Tests;
 
 use ArrayObject;
 use InvalidArgumentException;
+use UnexpectedValueException;
 use PHPUnit\Framework\TestCase;
 use Realpage\SimpleCache\ArrayCache;
 
@@ -36,7 +37,7 @@ class ArrayCacheTest extends TestCase
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException UnexpectedValueException
      */
     public function testCannotGetKeyWithInvalidCharacter()
     {
