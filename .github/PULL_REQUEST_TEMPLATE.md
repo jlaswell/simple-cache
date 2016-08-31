@@ -1,8 +1,3 @@
-### Description
-
-
----
-
 | Question           | Answer
 | ------------------ | ------
 | Bug fix or feature | bug/feature
@@ -10,3 +5,5 @@
 | BC breaks?         | yes/no
 | Deprecations?      | yes/no
 | Updated Changelog?  | yes/no
+
+### Description
