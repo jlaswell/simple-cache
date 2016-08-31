@@ -5,9 +5,12 @@ namespace Realpage\SimpleCache;
 use Traversable;
 use InvalidArgumentException;
 use Psr\Simplecache\CacheInterface;
+use Realpage\SimpleCache\KeyValidation;
 
 class ArrayCache implements CacheInterface
 {
+    use KeyValidation;
+
     protected $data = [];
 
     public function __construct(array $data = [])
@@ -77,7 +80,6 @@ class ArrayCache implements CacheInterface
         return isset($this->data[$key]);
     }
 
-    // TODO: Move into a CachedItem class eventually
     private function transformKeys($keys)
     {
         if ($keys instanceof Traversable) {
@@ -90,7 +92,7 @@ class ArrayCache implements CacheInterface
         }
 
         throw new InvalidArgumentException(
-            "Cache keys must be of type string and must not contain any of the characters '{}()/@:'"
+            "Cannot call getMultiple with a non array or non Traversable type"
         );
     }
 
@@ -103,19 +105,5 @@ class ArrayCache implements CacheInterface
         }
 
         return $tempKeys;
-    }
-
-    private function validateKey($key)
-    {
-        if ($this->keyFailsRequirements($key)) {
-            throw new InvalidArgumentException(
-                "Cache keys must be of type string and must not contain any of the characters '{}()/@:'"
-            );
-        }
-    }
-
-    private function keyFailsRequirements($key)
-    {
-        return !is_string($key) || strpbrk($key, '{}()/\@:') || strlen($key) === 0;
     }
 }
