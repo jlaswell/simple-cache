@@ -2,6 +2,7 @@
 
 namespace Realpage\SimpleCache;
 
+use Traversable;
 use InvalidArgumentException;
 use UnexpectedValueException;
 
@@ -20,5 +21,32 @@ trait KeyValidation
         }
 
         return $key;
+    }
+
+    private function transformKeys($keys)
+    {
+        if ($keys instanceof Traversable) {
+            return $this->transformTraversableKeys($keys);
+        } elseif (is_array($keys)) {
+            foreach ($keys as $key) {
+                $this->validateKey($key);
+            }
+            return $keys;
+        }
+
+        throw new InvalidArgumentException(
+            "Cannot call getMultiple with a non array or non Traversable type"
+        );
+    }
+
+    private function transformTraversableKeys($keys)
+    {
+        $tempKeys = [];
+        foreach ($keys as $key => $value) {
+            $this->validateKey($key);
+            $tempKeys[] = $key;
+        }
+
+        return $tempKeys;
     }
 }
