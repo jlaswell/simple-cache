@@ -23,6 +23,7 @@
     ],
     "require": {
         "php": "~7.0",
+        "predis/predis": "^1.1",
         "psr/simple-cache": "dev-master"
     },
     "require-dev": {
