@@ -1,10 +1,10 @@
 <?php
 
-namespace Realpage\SimpleCache\Tests;
+namespace Jlaswell\SimpleCache\Tests;
 
-use UnexpectedValueException;
 use PHPUnit\Framework\TestCase;
-use Realpage\SimpleCache\KeyValidation;
+use Jlaswell\SimpleCache\InvalidKeyException;
+use Jlaswell\SimpleCache\KeyValidation;
 
 class KeyValidationTest extends TestCase
 {
@@ -21,7 +21,7 @@ class KeyValidationTest extends TestCase
     }
 
     /**
-     * @expectedException UnexpectedValueException
+     * @expectedException \Jlaswell\SimpleCache\InvalidKeyException
      */
     public function testKeyContainsAtLeastOneCharacter()
     {
@@ -29,7 +29,7 @@ class KeyValidationTest extends TestCase
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException \Jlaswell\SimpleCache\InvalidKeyException
      */
     public function testCannotGetUnlessKeyIsString()
     {
@@ -37,7 +37,7 @@ class KeyValidationTest extends TestCase
     }
 
     /**
-     * @expectedException UnexpectedValueException
+     * @expectedException \Jlaswell\SimpleCache\InvalidKeyException
      */
     public function testDoesNotAllowLeftCurlyBrace()
     {
@@ -45,7 +45,7 @@ class KeyValidationTest extends TestCase
     }
 
     /**
-     * @expectedException UnexpectedValueException
+     * @expectedException \Jlaswell\SimpleCache\InvalidKeyException
      */
     public function testDoesNotAllowRightCurlyBrace()
     {
@@ -53,7 +53,7 @@ class KeyValidationTest extends TestCase
     }
 
     /**
-     * @expectedException UnexpectedValueException
+     * @expectedException \Jlaswell\SimpleCache\InvalidKeyException
      */
     public function testDoesNotAllowLeftParenthesis()
     {
@@ -61,7 +61,7 @@ class KeyValidationTest extends TestCase
     }
 
     /**
-     * @expectedException UnexpectedValueException
+     * @expectedException \Jlaswell\SimpleCache\InvalidKeyException
      */
     public function testDoesNotAllowRightParenthesis()
     {
@@ -69,7 +69,7 @@ class KeyValidationTest extends TestCase
     }
 
     /**
-     * @expectedException UnexpectedValueException
+     * @expectedException \Jlaswell\SimpleCache\InvalidKeyException
      */
     public function testDoesNotAllowForwardSlash()
     {
@@ -77,7 +77,7 @@ class KeyValidationTest extends TestCase
     }
 
     /**
-     * @expectedException UnexpectedValueException
+     * @expectedException \Jlaswell\SimpleCache\InvalidKeyException
      */
     public function testDoesNotAllowBackslash()
     {
@@ -85,7 +85,7 @@ class KeyValidationTest extends TestCase
     }
 
     /**
-     * @expectedException UnexpectedValueException
+     * @expectedException \Jlaswell\SimpleCache\InvalidKeyException
      */
     public function testDoesNotAllowAtSymbol()
     {
@@ -93,7 +93,7 @@ class KeyValidationTest extends TestCase
     }
 
     /**
-     * @expectedException UnexpectedValueException
+     * @expectedException \Jlaswell\SimpleCache\InvalidKeyException
      */
     public function testDoesNotAllowColon()
     {

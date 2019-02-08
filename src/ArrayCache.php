@@ -1,11 +1,10 @@
 <?php
 
-namespace Realpage\SimpleCache;
+namespace Jlaswell\SimpleCache;
 
 use Traversable;
-use InvalidArgumentException;
 use Psr\SimpleCache\CacheInterface;
-use Realpage\SimpleCache\KeyValidation;
+use Jlaswell\SimpleCache\KeyValidation;
 
 class ArrayCache implements CacheInterface
 {
@@ -21,21 +20,17 @@ class ArrayCache implements CacheInterface
         );
     }
 
-    public function get($key)
+    public function get($key, $default = null)
     {
         $this->validateKey($key);
 
-        return $this->data[$key] ?? null;
+        return $this->data[$key] ?? $default;
     }
 
     public function set($key, $value, $ttl = null)
     {
         $this->validateKey($key);
         $this->data[$key] = $value;
-
-        if (is_null($value)) {
-            return false;
-        }
 
         return true;
     }
@@ -44,6 +39,8 @@ class ArrayCache implements CacheInterface
     {
         $this->validateKey($key);
         unset($this->data[$key]);
+
+        return true;
     }
 
     public function clear()
@@ -51,14 +48,16 @@ class ArrayCache implements CacheInterface
         $this->data = [];
     }
 
-    public function getMultiple($keys)
+    public function getMultiple($keys, $default = null)
     {
         $keys = $this->transformKeys($keys);
 
-        return array_merge(
-            array_fill_keys($keys, null),
+        $data = array_merge(
+            array_fill_keys($keys, $default),
             array_intersect_key($this->data, array_flip($keys))
         );
+
+        return $data;
     }
 
     public function setMultiple($items, $ttl = null)
@@ -75,9 +74,11 @@ class ArrayCache implements CacheInterface
     {
         $keys       = $this->transformKeys($keys);
         $this->data = array_diff_key($this->data, array_flip($keys));
+
+        return true;
     }
 
-    public function exists($key)
+    public function has($key)
     {
         $this->validateKey($key);
 

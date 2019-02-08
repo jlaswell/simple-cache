@@ -2,7 +2,7 @@
 
 Contributions are **welcome** and will be fully **credited**.
 
-We accept contributions via Pull Requests on [Github](https://github.com/realpage/simple-cache).
+We accept contributions via Pull Requests on [Github](https://github.com/jlaswell/simple-cache).
 
 
 ## Pull Requests

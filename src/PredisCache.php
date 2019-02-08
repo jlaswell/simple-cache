@@ -1,11 +1,11 @@
 <?php
 
-namespace Realpage\SimpleCache;
+namespace Jlaswell\SimpleCache;
 
 use Traversable;
 use Predis\Client;
 use Psr\SimpleCache\CacheInterface;
-use Realpage\SimpleCache\KeyValidation;
+use Jlaswell\SimpleCache\KeyValidation;
 
 class PredisCache implements CacheInterface
 {
@@ -23,25 +23,22 @@ class PredisCache implements CacheInterface
         }
     }
 
-    public function get($key)
+    public function get($key, $default = null)
     {
-        return $this->client->get($this->validateKey($key));
+        return $this->client->get($this->validateKey($key)) ?? $default;
     }
 
     public function set($key, $value, $ttl = null)
     {
-        if (is_null($value)) {
-            $this->client->del($this->validateKey($key));
-
-            return false;
-        }
-
-        return $this->client->set($this->validateKey($key), $value)->getPayload() === 'OK';
+        return $this->client->set($this->validateKey($key), $value)
+            ->getPayload() === 'OK';
     }
 
     public function delete($key)
     {
-        $this->client->del($this->validateKey($key));
+        $removedKeys = $this->client->del($this->validateKey($key));
+
+        return $removedKeys === 1 || $removedKeys === 0;
     }
 
     public function clear()
@@ -49,10 +46,16 @@ class PredisCache implements CacheInterface
         $this->client->flushall();
     }
 
-    public function getMultiple($keys)
+    public function getMultiple($keys, $default = null)
     {
         $keys   = $this->transformKeys($keys);
         $values = $this->client->mget($keys);
+
+        if (!is_null($default)) {
+            foreach ($values as $key => $value) {
+                is_null($value) ? $values[$key] = $default : null;
+            }
+        }
 
         return array_combine($keys, $values);
     }
@@ -69,10 +72,10 @@ class PredisCache implements CacheInterface
 
     public function deleteMultiple($keys)
     {
-        $this->client->del($this->transformKeys($keys));
+        return $this->client->del($this->transformKeys($keys)) <= sizeof($keys);
     }
 
-    public function exists($key)
+    public function has($key)
     {
         return !is_null($this->client->get($this->validateKey($key)));
     }

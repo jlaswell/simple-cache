@@ -1,13 +1,18 @@
 <?php
 
-namespace Realpage\SimpleCache\Tests;
+namespace Jlaswell\SimpleCache\Tests;
 
 use ArrayObject;
-use InvalidArgumentException;
-use UnexpectedValueException;
+use Psr\SimpleCache\CacheInterface;
+use Psr\SimpleCache\InvalidArgumentException;
 
 trait CacheInterfaceTestCases
 {
+    public function testImplementsCacheInterface()
+    {
+        $this->assertInstanceOf(CacheInterface::class, $this->buildCache());
+    }
+
     public function testCacheCanBeSetOnInstantiation()
     {
         $data  = ['key1' => 'value1', 'key2' => 'value2'];
@@ -17,18 +22,17 @@ trait CacheInterfaceTestCases
         $this->assertEquals($data['key2'], $cache->get('key2'));
     }
 
-    public function testCacheCanSetASimpleValue()
+    public function testCacheCanGetWithADefaultValue()
     {
+        $data  = ['key1' => 'value1'];
         $cache = $this->buildCache();
 
-        $this->assertNull($cache->get('key1'));
-        $this->assertTrue($cache->set('key1', 'value1'));
-        $this->assertEquals('value1', $cache->get('key1'));
-        $this->assertFalse($cache->set('key2', null));
+        $this->assertEquals(null, $cache->get('key2'));
+        $this->assertEquals('value2', $cache->get('key2', 'value2'));
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException Psr\SimpleCache\InvalidArgumentException
      */
     public function testCannotGetUnlessKeyIsString()
     {
@@ -36,11 +40,95 @@ trait CacheInterfaceTestCases
     }
 
     /**
-     * @expectedException UnexpectedValueException
+     * @expectedException Psr\SimpleCache\InvalidArgumentException
      */
     public function testCannotGetKeyWithInvalidCharacter()
     {
         $this->buildCache()->get(':');
+    }
+
+    public function testCacheCanSetASimpleValue()
+    {
+        $cache = $this->buildCache();
+
+        $this->assertNull($cache->get('key1'));
+        $this->assertTrue($cache->set('key2', null));
+        $this->assertTrue($cache->set('key1', 'value1'));
+        $this->assertEquals('value1', $cache->get('key1'));
+    }
+
+    public function testCacheErrorsCorrectlyWhenSetFails()
+    {
+        $this->markTestIncomplete(
+            'Need a means of erroring out drivers during this test.'
+        );
+    }
+
+    /**
+     * @expectedException Psr\SimpleCache\InvalidArgumentException
+     */
+    public function testCacheCannotSetValueUsingInvalidKey()
+    {
+        $this->buildCache()->set(1, 'value1');
+    }
+
+    public function testCacheCanSetMoreComplexValues()
+    {
+        $this->markTestIncomplete(
+            'This test will need to focus on non-string values.'
+        );
+    }
+
+    public function testCacheCanSetListOfNaughtyStringValues()
+    {
+        $this->markTestIncomplete(
+            'This test will need to focus on the big list of naughty strings.'
+        );
+    }
+
+    public function testDeletesDataBasedOnKey()
+    {
+        $data  = ['key1' => 'value1', 'key2' => 'value2'];
+        $cache = $this->buildCache($data);
+
+        $this->assertTrue($cache->delete('key1'));
+        $this->assertNull($cache->get('key1'));
+        // @todo note in docs that we return true if key is non-existant but
+        // delete was successfully called.
+        $this->assertTrue($cache->delete('key1'));
+    }
+
+    public function testFailsToDeleteDataOnError()
+    {
+        $this->markTestIncomplete(
+            'Need a means of erroring out drivers during this test.'
+        );
+    }
+
+    /**
+     * @expectedException Psr\SimpleCache\InvalidArgumentException
+     */
+    public function testCannotDeleteIfKeyIsInvalid()
+    {
+        $this->buildCache()->delete(1);
+    }
+
+    public function testClearsAllData()
+    {
+        $data  = ['key1' => 'value1', 'key2' => 'value2'];
+        $cache = $this->buildCache($data);
+
+        $cache->clear();
+
+        $this->assertNull($cache->get('key1'));
+        $this->assertEquals(['key1' => null, 'key2' => null], $cache->getMultiple(array_keys($data)));
+    }
+
+    public function testFailsToClearsDataOnError()
+    {
+        $this->markTestIncomplete(
+            'Need a means of erroring out drivers during this test.'
+        );
     }
 
     public function testGetsMultipleValuesBasedOnKeys()
@@ -53,8 +141,19 @@ trait CacheInterfaceTestCases
         $this->assertEquals($data, $cache->getMultiple($keys));
     }
 
+    public function testProvidesDefaultForMissingKeysWhenGettingMultipleValues()
+    {
+        $data  = ['key1' => 'value1', 'key2' => 'value2'];
+        $cache = $this->buildCache($data);
+        $expectedData = array_merge($data, ['key3' => null]);
+        $expectedNewDefault = array_merge($data, ['key3' => 'foo']);
+
+        $this->assertEquals($expectedData, $cache->getMultiple(array_keys($expectedData)));
+        $this->assertEquals($expectedNewDefault, $cache->getMultiple(array_keys($expectedNewDefault), 'foo'));
+    }
+
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException Psr\SimpleCache\InvalidArgumentException
      */
     public function testCannotGetMultipleValuesIfAnyKeyIsInvalid()
     {
@@ -63,9 +162,9 @@ trait CacheInterfaceTestCases
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException Psr\SimpleCache\InvalidArgumentException
      */
-    public function testCannotGetMultipleValuesIfArgumentIsIncorrectType()
+    public function testCannotGetMultipleValuesForNonTraversable()
     {
         $data = ['key1' => 'value1', 'key2' => 'value2'];
         $this->buildCache($data)->getMultiple('123');
@@ -92,31 +191,13 @@ trait CacheInterfaceTestCases
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException Psr\SimpleCache\InvalidArgumentException
      */
-    public function testValidatesWhenAttemptingToSetMultipleValuesAtOnceFromTraversable()
+    public function testCannotSetMultipleValuesForNonTraversable()
     {
         $data  = [1 => 'value1', 'key2' => 'value2'];
         $items = new ArrayObject($data);
         $this->buildCache()->setMultiple($items);
-    }
-
-    public function testDeletesDataBasedOnKey()
-    {
-        $data  = ['key1' => 'value1', 'key2' => 'value2'];
-        $cache = $this->buildCache($data);
-
-        $this->assertEquals('value1', $cache->get('key1'));
-        $cache->delete('key1');
-        $this->assertNull($cache->get('key1'));
-    }
-
-    /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testCannotDeleteIfKeyIsInvalid()
-    {
-        $this->buildCache()->delete(1);
     }
 
     public function testDeletesMultipleItemsBasedOnKeys()
@@ -124,15 +205,22 @@ trait CacheInterfaceTestCases
         $data  = ['key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3'];
         $cache = $this->buildCache($data);
 
-        $cache->deleteMultiple(['key1', 'key2']);
 
+        $this->assertTrue($cache->deleteMultiple(['key1', 'key2']));
         $this->assertNull($cache->get('key1'));
         $this->assertNull($cache->get('key2'));
         $this->assertEquals('value3', $cache->get('key3'));
     }
 
+    public function testFailsToDeleteMultpleDataOnError()
+    {
+        $this->markTestIncomplete(
+            'Need a means of erroring out drivers during this test.'
+        );
+    }
+
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException Psr\SimpleCache\InvalidArgumentException
      */
     public function testCannotDeleteMultipleValuesIfAnyKeyIsInvalid()
     {
@@ -145,29 +233,18 @@ trait CacheInterfaceTestCases
         $data  = ['key1' => 'value1', 'key2' => null, 'key3' => false];
         $cache = $this->buildCache($data);
 
-        $this->assertTrue($cache->exists('key1'));
+        // $this->assertTrue($cache->has('key1'));
         // Expected to be false since we return null on failed get().
-        $this->assertFalse($cache->exists('key2'));
-        $this->assertTrue($cache->exists('key3'));
-        $this->assertFalse($cache->exists('key4'));
+        // $this->assertFalse($cache->has('key2'));
+        // $this->assertTrue($cache->has('key3'));
+        $this->assertFalse($cache->has('key4'));
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException Psr\SimpleCache\InvalidArgumentException
      */
     public function testValidatesKeysWhenCheckingExistence()
     {
-        $this->buildCache()->exists(1);
-    }
-
-    public function testClearsAllData()
-    {
-        $data  = ['key1' => 'value1', 'key2' => 'value2'];
-        $cache = $this->buildCache($data);
-
-        $cache->clear();
-
-        $this->assertNull($cache->get('key1'));
-        $this->assertEquals(['key1' => null, 'key2' => null], $cache->getMultiple(array_keys($data)));
+        $this->buildCache()->has(1);
     }
 }

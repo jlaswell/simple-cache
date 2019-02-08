@@ -1,10 +1,10 @@
 <?php
 
-namespace Realpage\SimpleCache\Tests;
+namespace Jlaswell\SimpleCache\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Psr\SimpleCache\CacheInterface;
-use Realpage\SimpleCache\ArrayCache;
+use Jlaswell\SimpleCache\ArrayCache;
 
 class ArrayCacheTest extends TestCase implements CacheInterfaceTest
 {

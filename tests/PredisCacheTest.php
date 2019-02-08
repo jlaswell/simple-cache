@@ -1,11 +1,11 @@
 <?php
 
-namespace Realpage\SimpleCache\Tests;
+namespace Jlaswell\SimpleCache\Tests;
 
 use Predis\Client;
 use PHPUnit\Framework\TestCase;
 use Psr\SimpleCache\CacheInterface;
-use Realpage\SimpleCache\PredisCache;
+use Jlaswell\SimpleCache\PredisCache;
 
 class PredisCacheTest extends TestCase implements CacheInterfaceTest
 {

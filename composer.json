@@ -1,12 +1,14 @@
 {
-    "name": "realpage/simple-cache",
+    "name": "jlaswell/simple-cache",
     "type": "library",
     "description": "Simple caching based on the proposed PSR-16",
     "keywords": [
-        "realpage",
-        "simple-cache"
+        "jlaswell",
+        "simple-cache",
+        "cache",
+        "PSR-16"
     ],
-    "homepage": "https://github.com/realpage/simple-cache",
+    "homepage": "https://github.com/jlaswell/simple-cache",
     "license": "MIT",
     "authors": [
         {
@@ -33,17 +35,17 @@
     },
     "autoload": {
         "psr-4": {
-            "Realpage\\SimpleCache\\": "src"
+            "Jlaswell\\SimpleCache\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Realpage\\SimpleCache\\Tests\\": "tests"
+            "Jlaswell\\SimpleCache\\Tests\\": "tests"
         }
     },
     "scripts": {
-        "test": "phpunit",
-        "format": "phpcbf --standard=psr2 src/"
+        "test": "phpunit --colors=always",
+        "format": "phpcbf --standard=psr2 src tests"
     },
     "extra": {
         "branch-alias": {

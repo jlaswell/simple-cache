@@ -1,6 +1,6 @@
 <?php
 
-namespace Realpage\SimpleCache\Tests;
+namespace Jlaswell\SimpleCache\Tests;
 
 use Psr\SimpleCache\CacheInterface;
 

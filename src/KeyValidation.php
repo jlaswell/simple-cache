@@ -1,23 +1,16 @@
 <?php
 
-namespace Realpage\SimpleCache;
+namespace Jlaswell\SimpleCache;
 
 use Traversable;
-use InvalidArgumentException;
-use UnexpectedValueException;
+use Jlaswell\SimpleCache\InvalidKeyException;
 
 trait KeyValidation
 {
-    public function validateKey($key): string
+    public function validateKey($key) : string
     {
-        if (!is_string($key)) {
-            throw new InvalidArgumentException(
-                "Cache keys must be a string"
-            );
-        } elseif (strpbrk($key, '{}()/\@:') || strlen($key) === 0) {
-            throw new UnexpectedValueException(
-                "Cache keys must contain at least one character and not contain any of the characters '{}()/@:'"
-            );
+        if (!is_string($key) || strpbrk($key, '{}()/\@:') || strlen($key) < 1) {
+            throw new InvalidKeyException();
         }
 
         return $key;
@@ -34,7 +27,8 @@ trait KeyValidation
             return $keys;
         }
 
-        throw new InvalidArgumentException(
+        // @todo May need to adjust this exception type
+        throw new InvalidKeyException(
             "Cannot call getMultiple with a non array or non Traversable type"
         );
     }
